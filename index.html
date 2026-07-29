@@ -360,6 +360,18 @@
   .icon-wrap svg .i-blue{ stroke:var(--blue); }
   .icon-wrap svg .i-dim{ stroke:var(--text-secondary); }
 
+  .card-img-wrap{
+    width:100%; aspect-ratio:1/1; border-radius:16px;
+    overflow:hidden; background:rgba(255,255,255,0.5);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform 0.35s;
+    box-shadow:var(--shadow-sm);
+  }
+  .card:hover .card-img-wrap{ transform:scale(1.04); }
+  .card-img-wrap img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+
   .card-name{
     font-weight:600; font-size:15px;
     line-height:1.45; color:var(--text);
@@ -527,15 +539,15 @@ const icons = {
 };
 
 const systems = [
-  { name:"ระบบสารบรรณอิเล็กทรอนิกส์", url:"https://joodami.github.io/PS-Sarabun-V.1/?openExternalBrowser=1", icon:"document" },
-  { name:"ระบบติดตามแผนปฏิบัติการและงบประมาณ", url:"http://161.82.218.12/psssar/MasterData/LogIn.aspx", icon:"signature" },
-  { name:"ระบบจัดเก็บผลงานรางวัลเกียรติยศ", url:"https://phiman-2026.github.io/certificate-system/", icon:"award" },
-  { name:"ระบบดูแลช่วยเหลือนักเรียน", url:"https://phiman.stu-mis.online/index-1.php", icon:"care" },
-  { name:"ระบบจัดเก็บรายงาน", url:"https://phiman-2026.github.io/Report-Management-System/", icon:"report" },
-  { name:"ระบบจัดเก็บรายงานผลการปฏิบัติงาน", url:"https://phiman-2026.github.io/Performance-Reporting-System/", icon:"performance" },
-  { name:"ระบบประเมินแผนการจัดการเรียนรู้ครูผู้สอน", url:"https://script.google.com/a/macros/psu.ac.th/s/AKfycbyASXHz-MGVfe1eB03k4OsFXLJr-Nm0CjkYSM77lAFiHjkzNhrXqo6rtxvUYYg0NxrC/exec", icon:"evaluation" },
-  { name:"ระบบจองห้องประชุมออนไลน์", url:"https://phiman-2026.github.io/Reserve-a-meeting-room/", icon:"meeting" },
-  { name:"ระบบคลังจัดเก็บรูปภาพกิจกรรม", url:"https://script.google.com/a/macros/psu.ac.th/s/AKfycbzy6UZ2GJMmr2gV2t5cH-Duz0U5tpQTT9LzaMO_A-FZZGgAYAxpY2hOygdvKClQTb2o/exec", icon:"gallery" }
+  { name:"ระบบสารบรรณอิเล็กทรอนิกส์", url:"https://joodami.github.io/PS-Sarabun-V.1/?openExternalBrowser=1", icon:"document", img:"https://img2.pic.in.th/4b7c564fcc94e08779ff0818a24962e2.png" },
+  { name:"ระบบติดตามแผนปฏิบัติการและงบประมาณ", url:"http://161.82.218.12/psssar/MasterData/LogIn.aspx", icon:"signature", img:"https://img2.pic.in.th/843c8a2f6d211cf70549b1d61875a4e0.png" },
+  { name:"ระบบจัดเก็บผลงานรางวัลเกียรติยศ", url:"https://phiman-2026.github.io/certificate-system/", icon:"award", img:"https://img2.pic.in.th/0bd67e7f393adf2be2f3ab6b06e6a5e1.png" },
+  { name:"ระบบดูแลช่วยเหลือนักเรียน", url:"https://phiman.stu-mis.online/index-1.php", icon:"care", img:"https://img1.pic.in.th/images/c20a4a3105f58c6ed5f366ed44566cda.png" },
+  { name:"ระบบจัดเก็บรายงาน", url:"https://phiman-2026.github.io/Report-Management-System/", icon:"report", img:"https://img1.pic.in.th/images/f7dfb8d13ddcf2af57935ae101a7f75f.png" },
+  { name:"ระบบจัดเก็บรายงานผลการปฏิบัติงาน", url:"https://phiman-2026.github.io/Performance-Reporting-System/", icon:"performance", img:"https://img2.pic.in.th/e9b822b3569f3669effa1527e2892fe2.png" },
+  { name:"ระบบประเมินแผนการจัดการเรียนรู้ครูผู้สอน", url:"https://script.google.com/a/macros/psu.ac.th/s/AKfycbyASXHz-MGVfe1eB03k4OsFXLJr-Nm0CjkYSM77lAFiHjkzNhrXqo6rtxvUYYg0NxrC/exec", icon:"evaluation", img:"https://img1.pic.in.th/images/be385852d53b6406750368f7d6062eed.png" },
+  { name:"ระบบจองห้องประชุมออนไลน์", url:"https://phiman-2026.github.io/Reserve-a-meeting-room/", icon:"meeting", img:"https://img1.pic.in.th/images/78c7f96d10e3fa29a606e759bb67200b.png" },
+  { name:"ระบบคลังจัดเก็บรูปภาพกิจกรรม", url:"https://script.google.com/a/macros/psu.ac.th/s/AKfycbzy6UZ2GJMmr2gV2t5cH-Duz0U5tpQTT9LzaMO_A-FZZGgAYAxpY2hOygdvKClQTb2o/exec", icon:"gallery", img:"https://img1.pic.in.th/images/24e2aa5a4fbccb4e311538c55d66852b.png" }
 ];
 
 const grid = document.getElementById('systemGrid');
@@ -547,7 +559,7 @@ systems.forEach((sys, i) => {
   a.className = "card";
   a.dataset.index = i;
   a.innerHTML = `
-    <div class="icon-wrap">${icons[sys.icon]}</div>
+    <div class="card-img-wrap"><img src="${sys.img}" alt="${sys.name}" loading="lazy"></div>
     <div class="card-name">${sys.name}</div>
     <div class="card-open"></div>
   `;
