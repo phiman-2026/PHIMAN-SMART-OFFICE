@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHIMAN SMART OFFICE</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/phiman-2026/picture/main/logo%20phiman.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f5f7;
+    --bg-elev:#ffffff;
+    --text:#1d1d1f;
+    --text-secondary:#6e6e73;
+    --blue:#0071e3;
+    --blue-dark:#0059b3;
+    --card-bg:rgba(255,255,255,0.66);
+    --card-bg-hover:rgba(255,255,255,0.86);
+    --card-border:rgba(0,0,0,0.06);
+    --divider:rgba(0,0,0,0.08);
+    --shadow-sm:0 2px 10px rgba(0,0,0,0.04);
+    --shadow-md:0 12px 36px rgba(0,0,0,0.10);
+    --shadow-lg:0 20px 60px rgba(0,0,0,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system, BlinkMacSystemFont, 'Inter', 'Noto Sans Thai', 'Segoe UI', Roboto, sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--blue); color:#fff;}
+
+  /* ---------- soft aurora background ---------- */
+  .aurora{
+    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .aurora span{
+    position:absolute; border-radius:50%; filter:blur(90px); opacity:0.35;
+    animation:drift 22s ease-in-out infinite alternate;
+  }
+  .aurora span:nth-child(1){ width:520px; height:520px; top:-160px; left:-120px; background:#0071e3; }
+  .aurora span:nth-child(2){ width:460px; height:460px; top:120px; right:-160px; background:#ff375f; animation-delay:-6s; }
+  .aurora span:nth-child(3){ width:480px; height:480px; bottom:-200px; left:30%; background:#ffd60a; animation-delay:-12s; opacity:0.22; }
+  @keyframes drift{
+    0%{ transform:translate(0,0) scale(1); }
+    100%{ transform:translate(40px,-30px) scale(1.08); }
+  }
+
+  /* ---------- intro: apple-style hand-drawn hello ---------- */
+  #splash{
+    position:fixed; inset:0; z-index:100;
+    background:var(--bg);
+    display:flex; align-items:center; justify-content:center;
+    animation:splashOut 0.9s ease forwards;
+    animation-delay:9.8s;
+  }
+  #splash > div{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; }
+
+  #helloStage{ animation:stageOut 0.6s ease forwards; animation-delay:3.6s; }
+  #helloStage svg{ width:min(70vw, 420px); height:auto; color:var(--text); }
+  #helloStage svg path{
+    stroke-dasharray:1400; stroke-dashoffset:1400;
+    animation:draw 1s ease forwards;
+  }
+  #helloStage svg path.p1{ animation-delay:0.05s; animation-duration:0.85s; }
+  #helloStage svg path.p2{ animation-delay:0.75s; animation-duration:2.85s; }
+
+  #sawasdeeStage{
+    opacity:0;
+    animation:stageIn 0.3s ease forwards, stageOut 0.5s ease forwards;
+    animation-delay:4.0s, 7.6s;
+  }
+  #sawasdeeStage svg{ width:min(60vw, 340px); height:auto; color:var(--text); }
+  #sawasdeeStage svg path{
+    stroke-dasharray:19000; stroke-dashoffset:19000;
+    animation:draw 3s ease forwards;
+    animation-delay:4.3s;
+  }
+
+  #welcomeStage{
+    opacity:0;
+    animation:stageIn 0.9s ease forwards;
+    animation-delay:8.0s;
+  }
+  #welcomeStage img{
+    width:64px; height:64px; object-fit:contain; border-radius:16px;
+    box-shadow:var(--shadow-md);
+  }
+  #welcomeStage .eyebrow{
+    font-size:15px; color:var(--text-secondary); font-weight:500; letter-spacing:0.01em;
+  }
+  #welcomeStage .brand{
+    font-size:clamp(26px,5vw,44px); font-weight:700; letter-spacing:-0.02em;
+    color:var(--text); text-align:center; line-height:1.15;
+  }
+  #welcomeStage .brand .accent{ color:var(--blue); }
+
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes stageOut{ to{ opacity:0; } }
+  @keyframes stageIn{ to{ opacity:1; } }
+  @keyframes splashOut{ to{ opacity:0; visibility:hidden; } }
+
+  /* ---------- header ---------- */
+  header{
+    position:relative; z-index:1;
+    display:flex; flex-direction:column; align-items:center;
+    padding:48px 20px 34px;
+    opacity:0; animation:fadeUp 0.8s ease forwards; animation-delay:10.9s;
+  }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .banner-frame{
+    width:min(920px, 92vw);
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:var(--shadow-lg);
+    position:relative;
+    background:var(--bg-elev);
+  }
+  .banner-frame img{ width:100%; display:block; }
+
+  .brand-row{
+    display:flex; align-items:center; gap:16px;
+    margin-top:20px; z-index:2; position:relative;
+    padding:0 6px;
+  }
+  .brand-row img.logo{
+    width:56px; height:56px; object-fit:contain; border-radius:14px;
+    background:var(--bg-elev); box-shadow:var(--shadow-sm);
+    padding:6px;
+  }
+  .brand-text h1{
+    font-weight:700; letter-spacing:-0.02em;
+    font-size:clamp(20px,3vw,28px); margin:0; color:var(--text);
+  }
+  .brand-text h1 .accent{color:var(--blue);}
+  .brand-text p{margin:4px 0 0; font-size:14px; color:var(--text-secondary);}
+
+  /* ---------- main grid ---------- */
+  main{
+    position:relative; z-index:1;
+    max-width:1180px; margin:0 auto; padding:40px 20px 90px;
+  }
+  .section-label{
+    display:flex; align-items:center; gap:10px; margin-bottom:26px;
+    opacity:0; animation:fadeUp 0.8s ease forwards; animation-delay:11.1s;
+  }
+  .section-label span{
+    font-weight:600; letter-spacing:0.04em; font-size:13px;
+    color:var(--blue); text-transform:uppercase;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
+    gap:18px;
+  }
+  .card{
+    position:relative;
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:20px;
+    padding:28px 20px 24px;
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:14px;
+    text-decoration:none; color:inherit;
+    cursor:pointer;
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    transition:transform 0.35s cubic-bezier(.2,.8,.25,1), box-shadow 0.35s, background 0.35s;
+    opacity:0; transform:translateY(16px);
+    animation:cardIn 0.6s ease forwards;
+    box-shadow:var(--shadow-sm);
+  }
+  @keyframes cardIn{ to{opacity:1; transform:translateY(0);} }
+  .card:hover, .card:focus-visible{
+    transform:translateY(-6px);
+    box-shadow:var(--shadow-md);
+    background:var(--card-bg-hover);
+  }
+  .card:focus-visible{ outline:2px solid var(--blue); outline-offset:3px; }
+
+  .icon-wrap{
+    width:60px; height:60px; border-radius:16px;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(145deg, rgba(0,113,227,0.10), rgba(0,113,227,0.04));
+    transition:transform 0.35s;
+  }
+  .card:hover .icon-wrap{ transform:scale(1.06); }
+  .icon-wrap svg{ width:28px; height:28px; }
+  .icon-wrap svg .i-blue{ stroke:var(--blue); }
+  .icon-wrap svg .i-dim{ stroke:var(--text-secondary); }
+
+  .card-name{
+    font-weight:600; font-size:15px;
+    line-height:1.45; color:var(--text);
+    transition:color 0.3s;
+  }
+  .card:hover .card-name{ color:var(--blue); }
+  .card-open{
+    font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--text-secondary);
+  }
+
+  footer{
+    position:relative; z-index:1;
+    text-align:center; padding:30px 20px 46px;
+    font-size:13px; color:var(--text-secondary);
+    border-top:1px solid var(--divider);
+    opacity:0; animation:fadeUp 0.8s ease forwards; animation-delay:11.2s;
+  }
+  footer .accent{color:var(--blue); font-weight:600;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+    #splash{display:none;}
+    .aurora span{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="aurora"><span></span><span></span><span></span></div>
+
+<div id="splash" aria-hidden="true">
+  <div id="helloStage">
+    <svg viewBox="0 0 638 200" fill="none" stroke="currentColor" stroke-width="14.8883">
+      <path class="p1" stroke-linecap="round" d="M8.69214 166.553C36.2393 151.239 61.3409 131.548 89.8191 98.0295C109.203 75.1488 119.625 49.0228 120.122 31.0026C120.37 17.6036 113.836 7.43883 101.759 7.43883C88.3598 7.43883 79.9231 17.6036 74.7122 40.9363C69.005 66.5793 64.7866 96.0036 54.1166 190.356"/>
+      <path class="p2" stroke-linecap="round" d="M55.1624 181.135C60.6251 133.114 81.4118 98.0479 107.963 98.0479C123.844 98.0479 133.937 110.703 131.071 128.817C129.457 139.487 127.587 150.405 125.408 163.06C122.869 178.941 130.128 191.348 152.122 191.348C184.197 191.348 219.189 173.523 237.097 145.915C243.198 136.509 245.68 128.073 245.928 119.884C246.176 104.996 237.739 93.8296 222.851 93.8296C203.992 93.8296 189.6 115.17 189.6 142.465C189.6 171.745 205.481 192.341 239.208 192.341C285.066 192.341 335.86 137.292 359.199 75.8585C365.788 58.513 368.26 42.4065 368.26 31.1512C368.26 17.8057 364.042 7.55823 352.131 7.55823C340.469 7.55823 332.777 16.6141 325.829 30.9129C317.688 47.4967 311.667 71.4162 309.203 98.4549C303 166.301 316.896 191.348 349.936 191.348C390 191.348 434.542 135.534 457.286 75.6686C463.803 58.513 466.275 42.4065 466.275 31.1512C466.275 17.8057 462.057 7.55823 450.146 7.55823C438.484 7.55823 430.792 16.6141 423.844 30.9129C415.703 47.4967 409.682 71.4162 407.218 98.4549C401.015 166.301 414.911 191.348 444.416 191.348C473.874 191.348 489.877 165.67 499.471 138.402C508.955 111.447 520.618 94.8221 544.935 94.8221C565.035 94.8221 580.916 109.71 580.916 137.75C580.916 168.768 560.792 192.093 535.362 192.341C512.984 192.589 498.285 174.475 499.774 147.179C501.511 116.907 519.873 94.8221 543.943 94.8221C557.839 94.8221 569.51 100.999 578.682 107.725C603.549 125.866 622.709 114.656 630.047 96.7186"/>
+    </svg>
+  </div>
+  <div id="sawasdeeStage">
+    <svg viewBox="-30 -1014 2351 1084" fill="none" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
+      <g transform="scale(1,-1)">
+        <path d="M487 515Q527 472 527 410V0H414V217Q414 256 377.5 279.5Q341 303 292 303Q243 303 212.0 281.0Q181 259 181 221V201Q185 202 194 202Q241 202 270.5 172.5Q300 143 300 96Q300 49 268.0 19.5Q236 -10 186 -10Q134 -10 100.5 21.5Q67 53 67 103V220Q67 281 108.0 323.0Q149 365 216 379Q295 436 345 489Q316 497 283 497Q226 497 187.0 474.0Q148 451 140 412H30Q36 492 103.5 539.0Q171 586 283 586Q353 586 407 566Q429 602 433 632H556Q552 580 487 515ZM405 447Q357 412 307 383Q375 376 414 339V413Q414 432 405 447ZM194 142Q174 142 161.0 129.0Q148 116 148 96Q148 76 161.0 63.5Q174 51 194 51Q214 51 226.5 64.0Q239 77 239 96Q239 116 226.5 129.0Q214 142 194 142Z M1054 408V103Q1054 53 1020.5 21.5Q987 -10 935 -10Q885 -10 853.0 19.5Q821 49 821 96Q821 143 851.0 172.5Q881 202 928 202Q937 202 941 201V401Q941 446 914.0 471.5Q887 497 836 497Q790 497 759.5 470.5Q729 444 723 399H610Q615 486 676.0 536.0Q737 586 838 586Q940 586 997.0 539.0Q1054 492 1054 408ZM973 96Q973 116 960.5 129.0Q948 142 928 142Q908 142 895.0 129.0Q882 116 882 96Q882 76 895.0 63.5Q908 51 928 51Q948 51 960.5 63.5Q973 76 973 96Z M1202 924Q1202 848 1166.5 792.0Q1131 736 1070.5 706.0Q1010 676 934 676Q839 676 785.0 713.5Q731 751 731 813Q731 858 761.0 886.0Q791 914 837 914Q883 914 913.0 886.0Q943 858 943 812Q943 770 920 744H928Q985 744 1026.0 768.0Q1067 792 1087.5 833.0Q1108 874 1108 924ZM837 769Q857 769 869.5 781.5Q882 794 882 814Q882 833 869.0 845.5Q856 858 837 858Q817 858 804.0 845.5Q791 833 791 814Q791 794 804.0 781.5Q817 769 837 769Z M1608 515Q1648 472 1648 410V0H1535V217Q1535 256 1498.5 279.5Q1462 303 1413 303Q1364 303 1333.0 281.0Q1302 259 1302 221V201Q1306 202 1315 202Q1362 202 1391.5 172.5Q1421 143 1421 96Q1421 49 1389.0 19.5Q1357 -10 1307 -10Q1255 -10 1221.5 21.5Q1188 53 1188 103V220Q1188 281 1229.0 323.0Q1270 365 1337 379Q1416 436 1466 489Q1437 497 1404 497Q1347 497 1308.0 474.0Q1269 451 1261 412H1151Q1157 492 1224.5 539.0Q1292 586 1404 586Q1474 586 1528 566Q1550 602 1554 632H1677Q1673 580 1608 515ZM1526 447Q1478 412 1428 383Q1496 376 1535 339V413Q1535 432 1526 447ZM1315 142Q1295 142 1282.0 129.0Q1269 116 1269 96Q1269 76 1282.0 63.5Q1295 51 1315 51Q1335 51 1347.5 64.0Q1360 77 1360 96Q1360 116 1347.5 129.0Q1335 142 1315 142Z M2255 373V0H2141V375Q2141 432 2104.0 464.5Q2067 497 2005 497Q1939 497 1900.5 462.0Q1862 427 1862 375Q1862 356 1867.5 328.0Q1873 300 1880 273Q1890 235 1895.0 209.0Q1900 183 1900 160V150Q1921 177 1984 231Q1952 235 1931.5 259.0Q1911 283 1911 318Q1911 357 1937.0 382.5Q1963 408 2005 408Q2047 408 2074.5 382.0Q2102 356 2102 315Q2102 277 2079.5 246.0Q2057 215 2011 171Q1961 122 1934.5 85.0Q1908 48 1905 0H1794V145Q1794 162 1786.0 194.0Q1778 226 1776 236Q1763 284 1756.0 319.0Q1749 354 1749 382Q1749 439 1780.5 485.5Q1812 532 1870.0 559.0Q1928 586 2004 586Q2120 586 2187.5 529.0Q2255 472 2255 373ZM2006 277Q2024 277 2035.5 288.5Q2047 300 2047 318Q2047 337 2035.5 348.0Q2024 359 2006 359Q1987 359 1975.5 348.0Q1964 337 1964 318Q1964 300 1975.5 288.5Q1987 277 2006 277Z M2261 655Q2195 683 2090.0 700.0Q1985 717 1888 717Q1824 717 1782 710Q1783 768 1812.0 812.5Q1841 857 1892.0 881.5Q1943 906 2010 906Q2099 906 2159 864V954H2254V710Q2259 688 2261 655ZM2165 742Q2144 790 2104.5 814.5Q2065 839 2012 839Q1965 839 1931.0 821.0Q1897 803 1885 773Q1901 775 1936 775Q1996 775 2057.0 766.5Q2118 758 2165 742Z" />
+      </g>
+    </svg>
+  </div>
+  <div id="welcomeStage">
+    <img src="https://raw.githubusercontent.com/phiman-2026/picture/main/logo%20phiman.png" alt="">
+    <div class="eyebrow">ยินดีต้อนรับสู่</div>
+    <div class="brand">โรงเรียนพิมานพิทยาสรรค์<br><span class="accent">PHIMAN SMART OFFICE</span></div>
+  </div>
+</div>
+
+<header>
+  <div class="banner-frame">
+    <img src="https://img2.pic.in.th/a96d8f32-0b13-4267-82c4-9b75e6331e75.png" alt="PHIMAN SMART OFFICE banner">
+  </div>
+</header>
+
+<main>
+  <div class="section-label"><span></span></div>
+  <div class="grid" id="systemGrid"></div>
+</main>
+
+<footer>
+  &copy; <span id="year"></span> โรงเรียนพิมานพิทยาสรรค์ · <span class="accent">PHIMAN SMART OFFICE</span>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear() + 543;
+
+const icons = {
+  document: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="i-blue" d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path class="i-dim" d="M14 3v4h4"/><path class="i-dim" d="M8 12h8M8 15.5h8M8 8.5h4"/></svg>',
+  signature: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="i-dim" d="M3 18c2-1 3-3 3.5-5.5C7 9.5 8 4 10 4s1 6-1 9-4 4-4 4 6 2 9-1c2-2 2-5 3-5s0 3 2 3 3-2 3-2"/><path class="i-blue" d="M3 20.5h18"/></svg>',
+  award: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle class="i-blue" cx="12" cy="8.5" r="5.2"/><path class="i-dim" d="M9 13l-2 8 5-2.6L17 21l-2-8"/></svg>',
+  care: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="i-blue" d="M12 20.5s-7.5-4.6-9.3-9.6C1.7 7.6 3.6 5 6.6 5c1.9 0 3.3 1 4.4 2.6C12.1 6 13.5 5 15.4 5c3 0 4.9 2.6 3.9 5.9C17.5 15.9 12 20.5 12 20.5Z"/><path class="i-dim" d="M8.5 11h2l1.2-2 1.6 3.3 1.2-1.8h1.5"/></svg>',
+  report: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="i-blue" d="M4 4.5h13.5L20 8v11.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-14a1 1 0 0 1 1-1Z"/><path class="i-dim" d="M7 11h10M7 14.5h10M7 17.5h6"/></svg>',
+  performance: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="i-blue" d="M4 20.5V9M9.5 20.5V4.5M15 20.5v-8M20 20.5V12"/><path class="i-dim" d="M2.5 20.5h19"/></svg>',
+  evaluation: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="i-blue" d="M6 3.5h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1Z"/><path class="i-dim" d="M8.5 13.5l2 2 4.5-5"/></svg>',
+  meeting: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect class="i-blue" x="3" y="5" width="18" height="15.5" rx="1.5"/><path class="i-dim" d="M3 9.5h18M8 3v3M16 3v3"/><path class="i-dim" d="M8 14h3v3H8z"/></svg>',
+  gallery: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect class="i-blue" x="3" y="4.5" width="18" height="14" rx="1.5"/><circle class="i-dim" cx="8.2" cy="9.5" r="1.7"/><path class="i-dim" d="M3.5 17l5.5-5.5 3.5 3.5 3-3 5 5"/></svg>'
+};
+
+const systems = [
+  { name:"ระบบสารบรรณอิเล็กทรอนิกส์", url:"https://joodami.github.io/PS-Sarabun-V.1/?openExternalBrowser=1", icon:"document" },
+  { name:"e-Signature ระบบลงลายเซ็นอิเล็กทรอนิกส์", url:"http://161.82.218.12/psssar/MasterData/LogIn.aspx", icon:"signature" },
+  { name:"ระบบจัดเก็บผลงานรางวัลเกียรติยศ", url:"https://phiman-2026.github.io/certificate-system/", icon:"award" },
+  { name:"ระบบดูแลช่วยเหลือนักเรียน", url:"https://phiman.stu-mis.online/index-1.php", icon:"care" },
+  { name:"ระบบจัดเก็บรายงาน (Report Management System)", url:"https://phiman-2026.github.io/Report-Management-System/", icon:"report" },
+  { name:"ระบบจัดเก็บรายงานผลการปฏิบัติงาน (PRS)", url:"https://phiman-2026.github.io/Performance-Reporting-System/", icon:"performance" },
+  { name:"ระบบประเมินแผนการจัดการเรียนรู้ครูผู้สอน", url:"https://script.google.com/a/macros/psu.ac.th/s/AKfycbyASXHz-MGVfe1eB03k4OsFXLJr-Nm0CjkYSM77lAFiHjkzNhrXqo6rtxvUYYg0NxrC/exec", icon:"evaluation" },
+  { name:"ระบบจองห้องประชุมออนไลน์", url:"https://phiman-2026.github.io/Reserve-a-meeting-room/", icon:"meeting" },
+  { name:"ระบบคลังจัดเก็บรูปภาพกิจกรรม", url:"https://script.google.com/a/macros/psu.ac.th/s/AKfycbzy6UZ2GJMmr2gV2t5cH-Duz0U5tpQTT9LzaMO_A-FZZGgAYAxpY2hOygdvKClQTb2o/exec", icon:"gallery" }
+];
+
+const grid = document.getElementById('systemGrid');
+systems.forEach((sys, i) => {
+  const a = document.createElement('a');
+  a.href = sys.url;
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  a.className = "card";
+  a.style.animationDelay = (11.2 + i * 0.08) + "s";
+  a.innerHTML = `
+    <div class="icon-wrap">${icons[sys.icon]}</div>
+    <div class="card-name">${sys.name}</div>
+    <div class="card-open">เปิดระบบ ↗</div>
+  `;
+  grid.appendChild(a);
+});
+</script>
+
+</body>
+</html>
