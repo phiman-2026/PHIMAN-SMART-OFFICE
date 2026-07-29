@@ -264,6 +264,54 @@
     color:var(--blue); text-transform:uppercase;
   }
 
+  .search-wrap{
+    position:relative;
+    max-width:420px;
+    margin:0 0 26px;
+    opacity:0;
+  }
+  body.intro-done .search-wrap{ animation:fadeUp 0.8s ease forwards; }
+  .search-wrap svg{
+    position:absolute; left:16px; top:50%; transform:translateY(-50%);
+    width:18px; height:18px; color:var(--text-secondary); pointer-events:none;
+  }
+  #systemSearch{
+    width:100%;
+    padding:13px 40px 13px 44px;
+    border-radius:14px;
+    border:1px solid var(--card-border);
+    background:var(--card-bg);
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    box-shadow:var(--shadow-sm);
+    font:500 15px/1.4 'Inter','Noto Sans Thai',sans-serif;
+    color:var(--text);
+    outline:none;
+    transition:box-shadow 0.25s, background 0.25s;
+  }
+  #systemSearch::placeholder{ color:var(--text-secondary); }
+  #systemSearch:focus{
+    box-shadow:0 0 0 3px rgba(0,113,227,0.18), var(--shadow-sm);
+    background:var(--card-bg-hover);
+  }
+  #searchClear{
+    position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    width:28px; height:28px; border:none; border-radius:50%;
+    background:transparent; color:var(--text-secondary);
+    display:none; align-items:center; justify-content:center;
+    cursor:pointer; font-size:16px; line-height:1;
+  }
+  #searchClear:hover{ background:rgba(0,0,0,0.06); color:var(--text); }
+  #searchClear.show{ display:flex; }
+  #noResults{
+    display:none;
+    text-align:center;
+    padding:40px 20px;
+    color:var(--text-secondary);
+    font-size:15px;
+  }
+  #noResults.show{ display:block; }
+
   .grid{
     display:grid;
     grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
@@ -274,7 +322,9 @@
   }
   .card{
     position:relative;
-    background:var(--card-bg);
+    background: #8e9eab;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #eef2f3, #8e9eab);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #eef2f3, #8e9eab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     border:1px solid var(--card-border);
     border-radius:20px;
     padding:28px 20px 24px;
@@ -284,7 +334,7 @@
     backdrop-filter:blur(20px) saturate(180%);
     -webkit-backdrop-filter:blur(20px) saturate(180%);
     --ty: 16px;
-    transition:transform 0.5s cubic-bezier(.2,.8,.25,1), box-shadow 0.35s, background 0.35s, opacity 0.6s ease;
+    transition:transform 0.5s cubic-bezier(.2,.8,.25,1), box-shadow 0.35s, opacity 0.6s ease, filter 0.35s;
     opacity:0; transform:translateY(var(--ty));
     box-shadow:var(--shadow-sm);
   }
@@ -292,7 +342,10 @@
   .card:hover, .card:focus-visible{
     transform:translateY(-6px);
     box-shadow:var(--shadow-md);
-    background:var(--card-bg-hover);
+    filter:brightness(1.04) saturate(1.1);
+  }
+  .card.is-hidden{
+    display:none !important;
   }
   .card:focus-visible{ outline:2px solid var(--blue); outline-offset:3px; }
 
@@ -376,7 +429,13 @@
 
 <main inert>
   <div class="section-label"><span></span></div>
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input type="search" id="systemSearch" placeholder="ค้นหาระบบ..." aria-label="ค้นหาระบบ" autocomplete="off">
+    <button type="button" id="searchClear" aria-label="ล้างคำค้นหา">✕</button>
+  </div>
   <div class="grid" id="systemGrid"></div>
+  <div id="noResults">ไม่พบระบบที่ตรงกับคำค้นหา</div>
 </main>
 
 <footer>
@@ -494,6 +553,40 @@ systems.forEach((sys, i) => {
   `;
   grid.appendChild(a);
 });
+
+/* ---------- ค้นหาระบบ ---------- */
+(function(){
+  const input = document.getElementById('systemSearch');
+  const clearBtn = document.getElementById('searchClear');
+  const noResults = document.getElementById('noResults');
+  const cards = Array.from(document.querySelectorAll('.card'));
+
+  function normalize(str){
+    return (str || '').toLowerCase().trim();
+  }
+
+  function applyFilter(){
+    const q = normalize(input.value);
+    clearBtn.classList.toggle('show', q.length > 0);
+
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const name = normalize(card.querySelector('.card-name')?.textContent);
+      const match = q === '' || name.includes(q);
+      card.classList.toggle('is-hidden', !match);
+      if (match) visibleCount++;
+    });
+
+    noResults.classList.toggle('show', visibleCount === 0);
+  }
+
+  input.addEventListener('input', applyFilter);
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    applyFilter();
+    input.focus();
+  });
+})();
 
 /* ---------- เปิดเผยการ์ดแบบไล่ลำดับเมื่อเลื่อนเข้ามาในจอ ---------- */
 (function(){
