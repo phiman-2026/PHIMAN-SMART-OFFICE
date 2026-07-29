@@ -25,12 +25,14 @@
     --shadow-lg:0 20px 60px rgba(0,0,0,0.14);
   }
   *{box-sizing:border-box;}
+  html{overflow-x:hidden; width:100%; scroll-behavior: smooth;}
   html,body{margin:0;padding:0;}
   body{
     background:var(--bg);
     color:var(--text);
     font-family:-apple-system, BlinkMacSystemFont, 'Inter', 'Noto Sans Thai', 'Segoe UI', Roboto, sans-serif;
     min-height:100vh;
+    width:100%;
     overflow-x:hidden;
     position:relative;
     -webkit-font-smoothing:antialiased;
@@ -107,41 +109,82 @@
   @keyframes stageIn{ to{ opacity:1; } }
   @keyframes splashOut{ to{ opacity:0; visibility:hidden; } }
 
-  /* ---------- header ---------- */
-  header{
-    position:relative; z-index:1;
-    display:flex; flex-direction:column; align-items:center;
-    padding:48px 20px 34px;
-    opacity:0; animation:fadeUp 0.8s ease forwards; animation-delay:10.9s;
+  /* ---------- Sticky Header & Full Responsive Banner ---------- */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    padding: 0; /* เริ่มต้นด้วยการชิดขอบจอ */
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+    animation-delay: 10.9s;
+    transition: padding 0.5s cubic-bezier(0.2, 0.8, 0.25, 1);
   }
   @keyframes fadeUp{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
 
-  .banner-frame{
-    width:min(920px, 92vw);
-    border-radius:24px;
-    overflow:hidden;
-    box-shadow:var(--shadow-lg);
-    position:relative;
-    background:var(--bg-elev);
+  .banner-frame {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.06);
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.25, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  .banner-frame img{ width:100%; display:block; }
 
-  .brand-row{
-    display:flex; align-items:center; gap:16px;
-    margin-top:20px; z-index:2; position:relative;
-    padding:0 6px;
+  /* รูปรองรับทุกหน้าจอ ไม่ถูกตัด ไม่ล้น */
+  .banner-frame img {
+    width: 100%;
+    height: auto;
+    max-height: 55vh; /* จำกัดความสูงสูงสุดในหน้าจอใหญ่ๆ */
+    object-fit: contain; /* โชว์ครบทุกสัดส่วนแน่นอน */
+    display: block;
+    opacity: 0;
+    transform-origin: center;
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.25, 1);
+    animation: bannerFadeIn 1.2s cubic-bezier(.2,.8,.25,1) forwards;
+    animation-delay: 10.9s;
   }
-  .brand-row img.logo{
-    width:56px; height:56px; object-fit:contain; border-radius:14px;
-    background:var(--bg-elev); box-shadow:var(--shadow-sm);
-    padding:6px;
+  @keyframes bannerFadeIn{
+    from{ opacity:0; transform:scale(1.03); }
+    to{ opacity:1; transform:scale(1); }
   }
-  .brand-text h1{
-    font-weight:700; letter-spacing:-0.02em;
-    font-size:clamp(20px,3vw,28px); margin:0; color:var(--text);
+
+  /* แสงวาบพาดผ่านแบนเนอร์ */
+  .banner-frame .shine{
+    position:absolute; top:0; bottom:0; left:-60%; width:40%;
+    background:linear-gradient(75deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+    transform:skewX(-18deg);
+    z-index:3; pointer-events:none;
+    animation:shineSweep 1.35s ease-in-out forwards;
+    animation-delay:11.8s;
   }
-  .brand-text h1 .accent{color:var(--blue);}
-  .brand-text p{margin:4px 0 0; font-size:14px; color:var(--text-secondary);}
+  @keyframes shineSweep{
+    0%{ left:-60%; opacity:0; }
+    12%{ opacity:1; }
+    88%{ opacity:1; }
+    100%{ left:130%; opacity:0; }
+  }
+
+  /* === สถานะตอนเลื่อนหน้าจอลง (Shrink on Scroll Effect) === */
+  header.is-scrolled {
+    padding: 12px 20px; /* หดตัวเข้ามาเป็นกรอบลอยตัว */
+  }
+  header.is-scrolled .banner-frame {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: var(--shadow-md);
+  }
+  header.is-scrolled .banner-frame img {
+    max-height: 60px; /* ย่อขนาดแบนเนอร์ลงอัตโนมัติ */
+    padding: 4px 0;
+  }
 
   /* ---------- main grid ---------- */
   main{
@@ -249,9 +292,10 @@
   </div>
 </div>
 
-<header>
-  <div class="banner-frame">
+<header id="siteHeader">
+  <div class="banner-frame" id="bannerFrame">
     <img src="https://img2.pic.in.th/a96d8f32-0b13-4267-82c4-9b75e6331e75.png" alt="PHIMAN SMART OFFICE banner">
+    <div class="shine"></div>
   </div>
 </header>
 
@@ -266,6 +310,20 @@
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear() + 543;
+
+/* ---------- Scroll Effect สำหรับ Header แบบ Apple-style ---------- */
+(function(){
+  const header = document.getElementById('siteHeader');
+  
+  // ตรวจจับการเลื่อนหน้าจอเพื่อเพิ่มคลาสลดขนาดแบนเนอร์
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 20) {
+      header.classList.add('is-scrolled');
+    } else {
+      header.classList.remove('is-scrolled');
+    }
+  }, { passive: true });
+})();
 
 const icons = {
   document: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="i-blue" d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path class="i-dim" d="M14 3v4h4"/><path class="i-dim" d="M8 12h8M8 15.5h8M8 8.5h4"/></svg>',
@@ -302,7 +360,7 @@ systems.forEach((sys, i) => {
   a.innerHTML = `
     <div class="icon-wrap">${icons[sys.icon]}</div>
     <div class="card-name">${sys.name}</div>
-    <div class="card-open">เปิดระบบ ↗</div>
+    <div class="card-open"></div>
   `;
   grid.appendChild(a);
 });
