@@ -2,9 +2,15 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, viewport-fit=cover">
+<meta name="description" content="ระบบสารสนเทศสำนักงานอิเล็กทรอนิกส์ โรงเรียนพิมานพิทยาสรรค์ - PHIMAN SMART OFFICE">
+<meta name="theme-color" content="#f5f5f7">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>PHIMAN SMART OFFICE</title>
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/phiman-2026/picture/main/logo%20phiman.png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/phiman-2026/picture/main/logo%20phiman.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -63,7 +69,25 @@
     animation:splashOut 0.9s ease forwards;
     animation-delay:9.8s;
   }
+  #splash.skip-out{ animation:splashOut 0.45s ease forwards !important; animation-delay:0s !important; }
+  #splash.skip-out *{ animation-play-state:paused !important; }
   #splash > div{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; }
+
+  #skipIntro{
+    position:fixed; z-index:101;
+    right:max(18px, env(safe-area-inset-right));
+    bottom:max(18px, env(safe-area-inset-bottom));
+    padding:10px 18px; border-radius:999px;
+    background:rgba(255,255,255,0.7);
+    border:1px solid rgba(0,0,0,0.08);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    color:var(--text); font:600 13px/1 'Inter','Noto Sans Thai',sans-serif;
+    cursor:pointer; opacity:0; box-shadow:var(--shadow-sm);
+    animation:fadeUp 0.6s ease forwards; animation-delay:1.4s;
+    transition:transform 0.2s, background 0.2s;
+  }
+  #skipIntro:hover{ background:rgba(255,255,255,0.95); transform:translateY(-2px); }
+  #skipIntro:focus-visible{ outline:2px solid var(--blue); outline-offset:3px; }
 
   #helloStage{ animation:stageOut 0.6s ease forwards; animation-delay:3.6s; }
   #helloStage svg{ width:min(70vw, 420px); height:auto; color:var(--text); }
@@ -114,12 +138,12 @@
     position: sticky;
     top: 0;
     z-index: 90;
-    padding: 0; /* เริ่มต้นด้วยการชิดขอบจอ */
+    padding: 0 0 0 0; /* เริ่มต้นด้วยการชิดขอบจอ */
+    padding-top: env(safe-area-inset-top, 0px); /* กันโดน notch/Dynamic Island บัง */
     opacity: 0;
-    animation: fadeUp 0.8s ease forwards;
-    animation-delay: 10.9s;
     transition: padding 0.5s cubic-bezier(0.2, 0.8, 0.25, 1);
   }
+  body.intro-done header{ animation: fadeUp 0.8s ease forwards; }
   @keyframes fadeUp{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
 
   .banner-frame {
@@ -135,24 +159,51 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
   }
 
-  /* รูปรองรับทุกหน้าจอ ไม่ถูกตัด ไม่ล้น */
+  /* รูปเต็มความกว้างจอเสมอ ปรับความสูงอัตโนมัติตามชนิดอุปกรณ์ ไม่ถูกตัด ไม่ล้น */
   .banner-frame img {
     width: 100%;
     height: auto;
-    max-height: 55vh; /* จำกัดความสูงสูงสุดในหน้าจอใหญ่ๆ */
+    max-height: min(55vh, 520px); /* ค่าเริ่มต้นสำหรับจอเดสก์ท็อป/โน้ตบุ๊ก */
     object-fit: contain; /* โชว์ครบทุกสัดส่วนแน่นอน */
     display: block;
     opacity: 0;
     transform-origin: center;
     transition: all 0.5s cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+  body.intro-done .banner-frame img{
     animation: bannerFadeIn 1.2s cubic-bezier(.2,.8,.25,1) forwards;
-    animation-delay: 10.9s;
   }
   @keyframes bannerFadeIn{
     from{ opacity:0; transform:scale(1.03); }
     to{ opacity:1; transform:scale(1); }
+  }
+
+  /* จอมือถือแนวตั้ง (โทรศัพท์) */
+  @media (max-width: 480px){
+    .banner-frame img{ max-height: 34vh; }
+  }
+  /* แท็บเล็ต / ไอแพด และมือถือแนวนอน */
+  @media (min-width: 481px) and (max-width: 900px){
+    .banner-frame img{ max-height: 42vh; }
+  }
+  /* จอกว้างพิเศษ (จอเดสก์ท็อปใหญ่ / อัลตร้าไวด์) กันแบนเนอร์เตี้ยเกินไป */
+  @media (min-width: 1600px){
+    .banner-frame img{ max-height: 62vh; }
+  }
+
+  /* ภาพโหลดไม่สำเร็จ: ซ่อนภาพอย่างนุ่มนวลแทนไอคอนรูปหัก */
+  .banner-frame img.img-error,
+  #welcomeStage img.img-error{
+    display:none;
+  }
+  .banner-frame.has-error{ min-height: 96px; }
+  .banner-frame.has-error::after{
+    content:"PHIMAN SMART OFFICE";
+    font-weight:700; letter-spacing:-0.01em; color:var(--text);
+    padding:26px 16px;
   }
 
   /* แสงวาบพาดผ่านแบนเนอร์ */
@@ -161,8 +212,15 @@
     background:linear-gradient(75deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
     transform:skewX(-18deg);
     z-index:3; pointer-events:none;
+    opacity:0;
+  }
+  body.intro-done .banner-frame .shine{
     animation:shineSweep 1.35s ease-in-out forwards;
-    animation-delay:11.8s;
+    animation-delay:0.9s;
+  }
+  .banner-frame .shine.replay{
+    animation:shineSweep 1.1s ease-in-out forwards !important;
+    animation-delay:0s !important;
   }
   @keyframes shineSweep{
     0%{ left:-60%; opacity:0; }
@@ -193,8 +251,9 @@
   }
   .section-label{
     display:flex; align-items:center; gap:10px; margin-bottom:26px;
-    opacity:0; animation:fadeUp 0.8s ease forwards; animation-delay:11.1s;
+    opacity:0;
   }
+  body.intro-done .section-label{ animation:fadeUp 0.8s ease forwards; }
   .section-label span{
     font-weight:600; letter-spacing:0.04em; font-size:13px;
     color:var(--blue); text-transform:uppercase;
@@ -204,6 +263,9 @@
     display:grid;
     grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
     gap:18px;
+  }
+  @media (max-width: 360px){
+    .grid{ grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:14px; }
   }
   .card{
     position:relative;
@@ -216,12 +278,12 @@
     cursor:pointer;
     backdrop-filter:blur(20px) saturate(180%);
     -webkit-backdrop-filter:blur(20px) saturate(180%);
-    transition:transform 0.35s cubic-bezier(.2,.8,.25,1), box-shadow 0.35s, background 0.35s;
-    opacity:0; transform:translateY(16px);
-    animation:cardIn 0.6s ease forwards;
+    --ty: 16px;
+    transition:transform 0.5s cubic-bezier(.2,.8,.25,1), box-shadow 0.35s, background 0.35s, opacity 0.6s ease;
+    opacity:0; transform:translateY(var(--ty));
     box-shadow:var(--shadow-sm);
   }
-  @keyframes cardIn{ to{opacity:1; transform:translateY(0);} }
+  .card.in-view{ --ty:0px; opacity:1; }
   .card:hover, .card:focus-visible{
     transform:translateY(-6px);
     box-shadow:var(--shadow-md);
@@ -249,15 +311,26 @@
   .card-open{
     font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
     color:var(--text-secondary);
+    display:inline-flex; align-items:center; gap:5px;
   }
+  .card-open::after{
+    content:"เปิดใช้งาน"; display:inline-flex; align-items:center; gap:4px;
+  }
+  .card-open::before{
+    content:"↗"; font-size:13px; transition:transform 0.3s cubic-bezier(.2,.8,.25,1);
+    order:2;
+  }
+  .card:hover .card-open, .card:focus-visible .card-open{ color:var(--blue); }
+  .card:hover .card-open::before, .card:focus-visible .card-open::before{ transform:translate(2px,-2px); }
 
   footer{
     position:relative; z-index:1;
     text-align:center; padding:30px 20px 46px;
     font-size:13px; color:var(--text-secondary);
     border-top:1px solid var(--divider);
-    opacity:0; animation:fadeUp 0.8s ease forwards; animation-delay:11.2s;
+    opacity:0;
   }
+  body.intro-done footer{ animation:fadeUp 0.8s ease forwards; }
   footer .accent{color:var(--blue); font-weight:600;}
 
   @media (prefers-reduced-motion: reduce){
@@ -286,21 +359,22 @@
     </svg>
   </div>
   <div id="welcomeStage">
-    <img src="https://raw.githubusercontent.com/phiman-2026/picture/main/logo%20phiman.png" alt="">
+    <img src="https://raw.githubusercontent.com/phiman-2026/picture/main/logo%20phiman.png" alt="โลโก้โรงเรียนพิมานพิทยาสรรค์" onerror="this.classList.add('img-error')">
     <div class="eyebrow">ยินดีต้อนรับสู่</div>
     <div class="brand">โรงเรียนพิมานพิทยาสรรค์<br><span class="accent">PHIMAN SMART OFFICE</span></div>
   </div>
 </div>
+<button id="skipIntro" type="button" aria-label="ข้ามอินโทร">ข้าม ›</button>
 
-<header id="siteHeader">
+<header id="siteHeader" inert>
   <div class="banner-frame" id="bannerFrame">
-    <img src="https://img2.pic.in.th/a96d8f32-0b13-4267-82c4-9b75e6331e75.png" alt="PHIMAN SMART OFFICE banner">
+    <img src="https://img2.pic.in.th/a96d8f32-0b13-4267-82c4-9b75e6331e75.png" alt="แบนเนอร์ PHIMAN SMART OFFICE" onerror="this.classList.add('img-error'); this.closest('.banner-frame').classList.add('has-error')">
     <div class="shine"></div>
   </div>
 </header>
 
-<main>
-  <div class="section-label"><span></span></div>
+<main inert>
+  <div class="section-label"><span>ระบบงานทั้งหมด</span></div>
   <div class="grid" id="systemGrid"></div>
 </main>
 
@@ -311,18 +385,72 @@
 <script>
 document.getElementById('year').textContent = new Date().getFullYear() + 543;
 
-/* ---------- Scroll Effect สำหรับ Header แบบ Apple-style ---------- */
+/* ---------- Intro sequence: reveal main content reliably ---------- */
+(function(){
+  const splash = document.getElementById('splash');
+  const skipBtn = document.getElementById('skipIntro');
+  const header = document.getElementById('siteHeader');
+  const main = document.querySelector('main');
+  let done = false;
+
+  function finishIntro(){
+    if (done) return;
+    done = true;
+    document.body.classList.add('intro-done');
+    header.removeAttribute('inert');
+    main.removeAttribute('inert');
+    splash.setAttribute('aria-hidden', 'true');
+    splash.style.pointerEvents = 'none';
+    skipBtn.style.display = 'none';
+  }
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReduced) {
+    // เมื่อผู้ใช้ตั้งค่าลดการเคลื่อนไหว #splash จะถูกซ่อนทันทีด้วย CSS
+    // และ animationend จะไม่ทำงาน จึงต้องเปิดเนื้อหาหลักทันทีที่นี่
+    skipBtn.style.display = 'none';
+    finishIntro();
+  } else {
+    skipBtn.addEventListener('click', () => {
+      splash.classList.add('skip-out');
+      finishIntro();
+    });
+    splash.addEventListener('animationend', (e) => {
+      if (e.target === splash) finishIntro();
+    });
+    // เผื่อกรณี animationend ไม่ยิง (เช่น แท็บถูกซ่อนตอนโหลด) ให้เปิดเนื้อหาแน่นอน
+    window.setTimeout(finishIntro, 11500);
+  }
+})();
+
+/* ---------- Scroll Effect สำหรับ Header แบบ Apple-style (throttled ด้วย rAF) ---------- */
 (function(){
   const header = document.getElementById('siteHeader');
-  
-  // ตรวจจับการเลื่อนหน้าจอเพื่อเพิ่มคลาสลดขนาดแบนเนอร์
+  let ticking = false;
+
+  function applyScrollState(){
+    header.classList.toggle('is-scrolled', window.scrollY > 20);
+    ticking = false;
+  }
+
   window.addEventListener('scroll', function() {
-    if (window.scrollY > 20) {
-      header.classList.add('is-scrolled');
-    } else {
-      header.classList.remove('is-scrolled');
+    if (!ticking) {
+      window.requestAnimationFrame(applyScrollState);
+      ticking = true;
     }
   }, { passive: true });
+})();
+
+/* ---------- แสงวาบซ้ำเมื่อชี้เมาส์ผ่านแบนเนอร์ ---------- */
+(function(){
+  const frame = document.getElementById('bannerFrame');
+  const shine = frame.querySelector('.shine');
+  frame.addEventListener('mouseenter', () => {
+    shine.classList.remove('replay');
+    void shine.offsetWidth; // reflow เพื่อรีสตาร์ทแอนิเมชัน
+    shine.classList.add('replay');
+  });
 })();
 
 const icons = {
@@ -356,7 +484,7 @@ systems.forEach((sys, i) => {
   a.target = "_blank";
   a.rel = "noopener noreferrer";
   a.className = "card";
-  a.style.animationDelay = (11.2 + i * 0.08) + "s";
+  a.dataset.index = i;
   a.innerHTML = `
     <div class="icon-wrap">${icons[sys.icon]}</div>
     <div class="card-name">${sys.name}</div>
@@ -364,6 +492,31 @@ systems.forEach((sys, i) => {
   `;
   grid.appendChild(a);
 });
+
+/* ---------- เปิดเผยการ์ดแบบไล่ลำดับเมื่อเลื่อนเข้ามาในจอ ---------- */
+(function(){
+  const cards = Array.from(document.querySelectorAll('.card'));
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!('IntersectionObserver' in window) || prefersReduced) {
+    cards.forEach(c => c.classList.add('in-view'));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const i = Number(el.dataset.index) % 12; // stagger จำกัดไว้ไม่ให้การ์ดท้ายๆ รอนานเกินไป
+        el.style.transitionDelay = (i * 0.06) + "s";
+        el.classList.add('in-view');
+        io.unobserve(el);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  cards.forEach(c => io.observe(c));
+})();
 </script>
 
 </body>
